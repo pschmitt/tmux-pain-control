@@ -16,25 +16,25 @@ get_tmux_option() {
 }
 
 bind_key() {
-  local disabled_keys
-  local dis_key
-  local key
+	local dis_key
+	local disabled_keys
+	local key
 
-  key="$1"
+	key="$1"
 
-  disabled_keys=$(get_tmux_option "@disabled_keys" "")
-  # comma-separated list to array
-  IFS=',' read -r -a disabled_keys <<< "$disabled_keys"
+	disabled_keys=$(get_tmux_option "@disabled_keys" "")
+	# comma-separated list to array
+	read -r -a disabled_keys <<< "${disabled_keys//,/ }"
 
-  for dis_key in "${disabled_keys[@]}"
-  do
-    if [[ "$dis_key" == "$key" ]]
-    then
-      # The user disabled the mapping of this key
-      return
-    fi
-  done
-	bind_key "$@"
+	for dis_key in "${disabled_keys[@]}"
+	do
+		if [[ "$dis_key" == "$key" ]]
+		then
+			# The user disabled the mapping of this key
+			return
+		fi
+	done
+	tmux bind-key "$@"
 }
 
 pane_navigation_bindings() {
